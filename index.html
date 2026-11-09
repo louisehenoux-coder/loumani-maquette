@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>loumani — DA v9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Inter+Tight:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=La+Belle+Aurore&display=swap" rel="stylesheet">
+<script>try{if(sessionStorage.getItem('lm-intro')||matchMedia('(prefers-reduced-motion:reduce)').matches)document.documentElement.classList.add('no-intro')}catch(e){}</script>
+<style>
+/* palette : prune-bordeaux en couleur principale, bleu et jaune en secondaires */
+:root{
+  --outer:#ECE7E0;--panel:#FFFFFF;--ink:#1F1220;
+  --plum:#4A1E3F;--plum4:#7A3B66;
+  --lav:#D9CCF4;--lav2:#F1ECFA;
+  --blue:#BCD5F0;--blue2:#E6F0FB;--yellow:#F5E39A;--blush:#F1D3D6;
+  --line:#E6E0D8;
+  --hand:"La Belle Aurore";--hsize:1.1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Geist,system-ui,sans-serif;background:var(--outer);color:var(--ink);-webkit-font-smoothing:antialiased;padding:0 16px 90px}
+body.modal-open{overflow:hidden}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{font-family:"Inter Tight",sans-serif;font-weight:600;letter-spacing:-.035em}
+h1 em,h2 em,h3 em{font-family:Fraunces,serif;font-style:italic;font-weight:500;letter-spacing:-.02em}
+.hand{font-family:var(--hand),cursive;font-weight:400;line-height:1.25;font-size:calc(1em * var(--hsize))}
+.kick{font-size:13px;font-weight:500;opacity:.6;margin-bottom:14px}
+.panel{background:var(--panel);border-radius:28px;max-width:1200px;margin:16px auto 0;padding:24px;position:relative;overflow:hidden}
+.panel.dark{background:var(--plum);color:#F6F1F8}
+.pad{padding:70px 40px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;font-size:14px;font-weight:500;transition:.25s;cursor:pointer;border:0;font-family:Geist}
+.btn.p{background:var(--plum);color:#fff}
+.btn.p:hover{background:var(--ink);transform:translateY(-2px);box-shadow:0 10px 24px rgba(59,36,64,.3)}
+.btn.s{border:1.5px solid var(--plum);color:var(--plum)}
+.btn.s:hover{background:var(--plum);color:#fff}
+.btn.l{background:#fff;color:var(--plum)}
+.btn.l:hover{background:var(--lav)}
+@keyframes scroll{to{transform:translateX(-50%)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{50%{transform:translateY(-8px)}}
+
+/* note de présentation */
+.idcard{max-width:1200px;margin:0 auto;padding:22px 8px 6px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;font-size:13px}
+.idcard .name{font-weight:600;font-size:15px}
+.idcard .desc{max-width:640px;opacity:.75;line-height:1.5}
+.swatches{display:flex;gap:8px}
+.swatches span{width:30px;height:30px;border-radius:50%;border:1px solid rgba(0,0,0,.08)}
+
+/* nav */
+nav{display:flex;align-items:center;justify-content:space-between;padding:4px 10px 22px}
+.logo{font-family:Fraunces;font-size:30px;font-weight:600;letter-spacing:-.03em;color:var(--plum)}
+.logo i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--yellow);margin-left:2px}
+nav .links{display:flex;gap:28px;font-size:14px;font-weight:500}
+nav .links a:hover{color:var(--plum4)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+.hero .txt{padding:46px 26px 40px}
+.hero h1{font-size:clamp(46px,5.6vw,80px);line-height:1}
+.sel{position:relative;background:var(--lav);padding:0 8px;margin:0 2px}
+.grow .sel{margin-right:0}
+.grow .sel+.wd{margin-left:-8px}
+.sel::before,.sel::after{content:"";position:absolute;width:3px;background:var(--plum4);top:-5px;bottom:-5px}
+.sel::before{left:-2px}.sel::after{right:-2px}
+.sel b::before,.sel b::after{content:"";position:absolute;width:12px;height:12px;border-radius:50%;background:var(--plum4)}
+.sel b::before{left:-6.5px;top:-15px}.sel b::after{right:-6.5px;bottom:-15px}
+.grow .sel::after,.grow .sel b::after{display:none}
+#h1{position:relative}
+.wd{background:linear-gradient(var(--lav),var(--lav)) no-repeat 0 0/calc(clamp(0, var(--p,0) * 5.2 - var(--k), 1) * 100%) 100%}
+.wd em{font-family:Fraunces;font-style:italic;font-weight:500;letter-spacing:-.02em}
+.caret{position:absolute;left:0;top:0;width:3px;background:var(--plum4);pointer-events:none}
+.caret::after{content:"";position:absolute;left:-4.5px;bottom:-12px;width:12px;height:12px;border-radius:50%;background:var(--plum4)}
+.hero .sub{font-size:18px;line-height:1.6;margin:30px 0 32px;max-width:520px;opacity:.8}
+.ctas{display:flex;gap:10px;flex-wrap:wrap}
+.trust{margin-top:34px;font-size:13px;opacity:.6;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+.trust b{font-weight:600;font-size:14px}
+.desk{position:relative;min-height:560px;border-radius:20px;background:var(--blue2);background-image:repeating-linear-gradient(90deg,transparent 0 22px,rgba(188,213,240,.55) 22px 44px);overflow:hidden}
+.win{background:#fff;border-radius:14px;box-shadow:0 30px 70px rgba(59,36,64,.22);overflow:hidden;border:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:7px;padding:11px 14px;border-bottom:1px solid #eee8e0;font-size:12px;color:#857a88}
+.bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.bar i:nth-child(1){background:#F27C6E}.bar i:nth-child(2){background:#F4C150}.bar i:nth-child(3){background:#7CC67F}
+.bar span{margin:0 auto;transform:translateX(-20px)}
+.desk .w1{position:absolute;left:50%;top:50%;width:74%;transform:translate(-50%,-52%)}
+.desk .w1 .ph{height:390px;background:linear-gradient(170deg,#F1ECFA,#C9B6EA);display:flex;align-items:flex-end;padding:16px;font-size:12px;color:#5d5170}
+.cursor{position:absolute;right:16%;bottom:24%;display:flex;align-items:flex-start;gap:2px;animation:float 3s ease-in-out infinite}
+.cursor em{font-style:normal;font-size:12px;font-weight:500;background:var(--plum);color:#fff;padding:4px 9px;border-radius:0 8px 8px 8px;margin-top:16px}
+.badge{position:absolute;left:22px;bottom:22px;width:116px;height:116px}
+.badge svg{animation:spin 20s linear infinite;width:100%;height:100%}
+.badge .mono{position:absolute;inset:0;display:grid;place-items:center;font-family:Fraunces;font-style:italic;font-weight:600;font-size:32px;color:var(--lav)}
+
+/* bandeau */
+.marquee{overflow:hidden;white-space:nowrap;padding:22px 0;font-family:Fraunces;font-style:italic;font-weight:500;font-size:30px}
+.marquee .track{display:inline-block;animation:scroll 40s linear infinite}
+.marquee span{margin:0 26px}
+.marquee b{font-style:normal;color:var(--yellow);font-size:16px;vertical-align:middle}
+.panel.marq{padding:0}
+
+/* titres de section */
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:50px;flex-wrap:wrap}
+.head h2{font-size:clamp(38px,4.4vw,60px);line-height:1.02;max-width:720px}
+.head .note{font-size:25px;max-width:260px;transform:rotate(-3deg);color:var(--plum4)}
+
+/* services : dossiers */
+.folders{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.folder{position:relative;padding-top:74px;cursor:pointer;background:none;border:0;text-align:left;font:inherit;color:var(--plum);display:flex;flex-direction:column}
+.folder .paper{position:absolute;left:18px;right:18px;top:22px;height:160px;background:#fff;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.12);transition:transform .45s cubic-bezier(.2,.8,.2,1);padding:12px;font-size:11px;color:#9a8f9c}
+.folder .paper i{display:block;height:70px;border-radius:5px;margin-bottom:8px;background:var(--plum)}
+.folder:hover .paper{transform:translateY(-40px) rotate(-4deg)}
+.folder .body{position:relative;flex:1;height:300px;border-radius:4px 16px 16px 16px;padding:26px 22px 64px;transition:box-shadow .4s}
+.folder:hover .body{box-shadow:0 20px 40px rgba(74,30,63,.2)}
+.folder .body::before{content:"";position:absolute;top:-22px;left:0;width:46%;height:24px;background:inherit;border-radius:12px 12px 0 0}
+.folder .obj{font-size:13px;font-weight:500;opacity:.7}
+.folder h3{font-size:34px;line-height:1;margin:8px 0 12px}
+.folder p{font-size:14px;line-height:1.5;opacity:.85}
+.folder ul{list-style:none;margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+.folder li{font-size:12px;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.6)}
+.folder .open{position:absolute;left:22px;bottom:20px;font-size:13px;font-weight:500;display:flex;gap:8px;align-items:center}
+.folder .open span{width:26px;height:26px;border-radius:50%;background:var(--plum);color:#fff;display:grid;place-items:center;transition:transform .3s}
+.folder:hover .open span{transform:rotate(45deg)}
+.f1 .body{background:var(--blue)}.f2 .body{background:var(--yellow)}.f3 .body{background:var(--lav)}.f4 .body{background:var(--blush)}
+.after-cta{display:flex;align-items:center;gap:18px;margin-top:46px;flex-wrap:wrap}
+.after-cta .hand{font-size:27px;color:var(--plum)}
+
+/* pop-up service */
+.modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;background:rgba(26,19,32,.45);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+.modal.on{opacity:1;pointer-events:auto}
+.modal .win{width:min(760px,100%);height:min(660px,92vh);overflow:auto;transform:translateY(24px) scale(.97);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.modal.on .win{transform:none}
+.modal .bar i:first-child{cursor:pointer}
+.modal .close{border:0;background:none;font-size:20px;cursor:pointer;margin-left:auto;color:#857a88}
+.modal .content{padding:28px 34px 30px}
+.modal .obj{font-size:13px;font-weight:500;color:var(--plum4)}
+.modal h3{font-size:44px;line-height:1;margin:6px 0 16px}
+.modal .intro{font-size:16px;line-height:1.6;opacity:.8;margin-bottom:20px}
+.modal .items{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.modal .item{border:1px solid var(--line);border-radius:14px;padding:16px}
+.modal .item b{display:block;font-size:15px;margin-bottom:4px}
+.modal .item span{font-size:13px;opacity:.7;line-height:1.5}
+.modal .for{background:var(--blue2);border-radius:14px;padding:16px 18px;font-size:14px;line-height:1.6;margin-bottom:22px}
+.modal .for .hand{font-size:22px;color:var(--plum);display:block;margin-bottom:2px}
+
+/* projets */
+.finder .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:24px}
+.finder .side{display:flex;gap:8px;padding:14px 24px 0;flex-wrap:wrap}
+.finder .side span{font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);cursor:pointer;transition:.2s}
+.finder .side span.on,.finder .side span:hover{background:var(--plum);color:#fff;border-color:var(--plum)}
+.file{cursor:pointer}
+.file .ph{height:240px;border-radius:12px;overflow:hidden;position:relative;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.file .ph::after{content:"Voir le projet ↗";position:absolute;left:14px;bottom:14px;background:#fff;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:500;opacity:0;transform:translateY(8px);transition:.35s}
+.file:hover .ph{transform:scale(1.02)}
+.file:hover .ph::after{opacity:1;transform:none}
+.file .name{margin-top:12px;font-size:15px;font-weight:600}
+.file .sector{font-size:13px;opacity:.55;margin-top:2px}
+.chips{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.chip{font-size:11px;padding:4px 10px;border-radius:999px;font-weight:500;color:var(--plum)}
+.c-contenus{background:var(--blue)}.c-site{background:var(--yellow)}.c-pub{background:var(--lav)}.c-crm{background:var(--blush)}
+
+/* à propos */
+.about .tags{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.about .tags div{display:flex;gap:8px;flex-wrap:wrap}
+.pill{font-size:12px;padding:6px 14px;border-radius:999px;border:1px solid #ddd}
+.aboutgrid{display:grid;grid-template-columns:.9fr 1.1fr;gap:50px;align-items:center;padding:40px 20px 50px}
+/* intro : rideau prune, le mot se remplit tout seul puis le rideau remonte */
+#intro{position:fixed;inset:0;z-index:100;background:var(--plum);color:#F6F1F8;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform .9s cubic-bezier(.76,0,.24,1)}
+#intro.out{transform:translateY(-100%)}
+#intro .word-note{opacity:calc(var(--w,0) * 8 - 7)}
+#intro .skip{position:absolute;right:24px;bottom:24px;font:500 13px Geist;color:#F6F1F8;background:none;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:9px 16px;cursor:pointer}
+#intro .skip:hover{background:#fff;color:var(--plum)}
+.no-intro #intro{display:none}
+html.intro-on body{overflow:hidden}
+/* bloc loumani : fond prune, le mot se remplit au scroll */
+.panel.stage{overflow:visible;padding:0;height:125vh;color:#F6F1F8}
+.word{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+.word .tags{position:absolute;left:24px;right:24px;top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.word .tags div{display:flex;gap:8px;flex-wrap:wrap}
+.word .pill{border-color:rgba(255,255,255,.25);color:#F6F1F8}
+.wm{position:relative;display:inline-block;transform:scale(calc(.9 + var(--w,0) * .1))}
+.wm h2{font-family:Fraunces;font-weight:600;font-size:clamp(64px,21vw,300px);letter-spacing:-.055em;line-height:1.05;padding:0 .04em}
+.wm .ghost{color:transparent;-webkit-text-stroke:1.5px rgba(246,241,248,.3)}
+.wm .fill{position:absolute;inset:0;color:#F6F1F8;clip-path:inset(-10% calc((1 - var(--w,0)) * 100%) -10% 0)}
+.wm .cur{position:absolute;top:8%;bottom:4%;left:calc(var(--w,0) * 100%);width:4px;margin-left:-2px;background:var(--yellow);opacity:calc(1 - max(0, var(--w,0) * 12 - 11))}
+.wm .cur::before{content:"";position:absolute;left:-5px;top:-14px;width:14px;height:14px;border-radius:50%;background:var(--yellow)}
+.wm .cur em{position:absolute;left:10px;bottom:6%;font-style:normal;font:500 12px Geist;background:var(--yellow);color:var(--plum);padding:4px 9px;border-radius:0 8px 8px 8px;white-space:nowrap}
+.word-note{font-size:28px;color:var(--yellow);margin-top:14px;opacity:calc(var(--w,0) * 8 - 7);transform:translateY(calc((1 - var(--w,0)) * 20px))}
+.polaroid{position:relative;width:300px;margin:0 auto;background:#fff;padding:12px 12px 48px;transform:rotate(-4deg);box-shadow:0 30px 60px rgba(74,30,63,.22);transition:transform .5s}
+.polaroid:hover{transform:rotate(0) scale(1.03)}
+.polaroid .ph{height:330px;background:linear-gradient(170deg,#F1ECFA,#C9B6EA);display:flex;align-items:flex-end;padding:12px;font-size:12px;color:#6f6472}
+.polaroid .cap{position:absolute;bottom:10px;left:16px;font-family:var(--hand);font-size:calc(22px * var(--hsize))}
+.tape{position:absolute;width:90px;height:26px;background:rgba(245,227,154,.9);top:-12px;left:50%;transform:translateX(-50%) rotate(-4deg)}
+.bio h3{font-size:34px;margin-bottom:18px}
+.bio p{font-size:16px;line-height:1.7;margin-bottom:14px;opacity:.85}
+.sel.y{background:var(--yellow)}
+.hl{background:linear-gradient(transparent 58%,var(--yellow) 58%)}
+.dock{display:inline-flex;gap:10px;padding:10px 14px;background:#F6F3EF;border:1px solid var(--line);border-radius:20px;margin-top:8px}
+.dock span{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:11px;font-weight:600;transition:transform .25s;color:var(--plum)}
+.dock span:nth-child(1){background:var(--blue)}.dock span:nth-child(2){background:var(--yellow)}.dock span:nth-child(3){background:var(--plum);color:#fff}.dock span:nth-child(4){background:var(--lav)}.dock span:nth-child(5){background:var(--blush)}.dock span:nth-child(6){background:var(--blue)}
+.dock span:hover{transform:translateY(-9px) scale(1.15)}
+.tools-note{font-size:21px;margin-top:6px;color:var(--plum4)}
+
+/* témoignages : photo de fond */
+.photo-bg{color:#fff;padding:90px 40px;background:#2a1a2f}
+.photo-bg .bgimg{position:absolute;inset:-20px;background:url("https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?auto=format&fit=crop&w=1800&q=70") center/cover;filter:blur(6px) saturate(.8);transform:scale(1.05)}
+.photo-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(74,30,63,.72),rgba(31,18,32,.82))}
+.photo-bg > *:not(.bgimg){position:relative;z-index:1}
+.photo-bg .kick{text-align:center;opacity:.75}
+.photo-bg h2{font-size:clamp(36px,4vw,56px);text-align:center;margin-bottom:56px}
+.photo-bg h2 em{color:var(--yellow)}
+.notes{display:flex;gap:26px;justify-content:center;flex-wrap:wrap}
+.notenote{transform:rotate(var(--r));width:270px;min-height:230px;padding:28px 24px;color:var(--ink);box-shadow:0 22px 40px rgba(0,0,0,.35);font-family:Fraunces;font-size:20px;line-height:1.35;transition:transform .4s;position:relative}
+.notenote:hover{transform:rotate(0) translateY(-6px)!important}
+.notenote small{display:block;font-family:Geist;font-weight:500;font-size:12px;margin-top:20px;opacity:.7}
+.photo-label{position:absolute!important;right:20px;bottom:16px;font-size:11px;opacity:.5}
+
+/* FAQ */
+.faq{display:grid;grid-template-columns:.8fr 1.2fr;gap:50px}
+.faq h2{font-size:clamp(36px,4vw,52px);line-height:1.02}
+details{border-bottom:1px solid var(--line);padding:20px 0}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;font-family:"Inter Tight";font-weight:600;font-size:18px;letter-spacing:-.01em}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:22px;transition:transform .3s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin-top:12px;font-size:15px;line-height:1.6;opacity:.75;max-width:560px}
+
+/* contact */
+.contact{display:grid;grid-template-columns:.9fr 1.1fr;gap:60px;align-items:center}
+.contact h2{font-size:clamp(48px,5.6vw,80px);line-height:1}
+.contact h2 em{color:var(--yellow)}
+.mailto{display:inline-block;margin-top:26px;font-size:15px;border-bottom:1px solid rgba(255,255,255,.35);padding-bottom:3px;transition:.25s}
+.mailto:hover{color:var(--yellow);border-color:var(--yellow)}
+.mail input.from{border:0;outline:none;font:14px Geist;flex:1;background:none;color:var(--ink)}
+.contact .wrapbadge{position:relative;height:0}
+.contact .badge{position:absolute;left:auto;right:-14px;top:-56px;width:112px;height:112px;z-index:2}
+.mail{color:var(--ink);position:relative}
+.mail .row{display:flex;gap:12px;padding:14px 20px;border-bottom:1px solid #eee8e0;font-size:14px}
+.mail .row span{opacity:.5;width:70px;flex:none}
+.mail .needs{display:flex;flex-wrap:wrap;gap:6px;padding:14px 20px;border-bottom:1px solid #eee8e0}
+.mail .needs input{display:none}
+.mail .needs label{font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);cursor:pointer;transition:.2s}
+.mail .needs input:checked+label{background:var(--plum);color:#fff;border-color:var(--plum)}
+.mail textarea{width:100%;border:0;padding:20px;font:15px Geist;height:130px;resize:none;background:none;color:var(--ink);outline:none}
+.mail .send{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-top:1px solid #eee8e0}
+footer{max-width:1200px;margin:30px auto 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-size:13px;opacity:.65;padding:0 12px}
+
+@media (max-width:900px){
+  .pad{padding:44px 14px}
+  .hero,.faq,.contact,.aboutgrid,.modal .items{grid-template-columns:1fr}
+  .folders{grid-template-columns:1fr 1fr}
+  .finder .grid{grid-template-columns:1fr}
+  nav .links{display:none}
+  .desk{min-height:460px}
+  .contact .badge{display:none}
+  .modal .content{padding:24px}
+}
+@media (max-width:560px){
+  body{padding:0 10px 60px}
+  .panel{border-radius:22px;padding:16px}
+  .pad{padding:40px 8px}
+  .folders{grid-template-columns:1fr}
+  .hero .txt{padding:24px 6px 30px}
+  .hero h1{font-size:42px}
+  .desk{min-height:400px}.desk .w1{width:84%}.desk .w1 .ph{height:300px}
+  .badge{width:90px;height:90px}
+  .marquee{font-size:22px;padding:16px 0}
+  .photo-bg{padding:56px 14px}
+  .notenote{width:100%;max-width:300px;min-height:180px}
+  .bio h3{font-size:30px}
+  .wm h2{font-size:23vw}.word-note{font-size:21px}.panel.stage{height:115vh}.wm .cur em{display:none}
+  .dock{gap:6px;padding:8px}.dock span{width:36px;height:36px}
+  .modal{padding:10px}.modal h3{font-size:34px}
+  .mail .row span{width:56px}
+  footer{flex-direction:column;gap:6px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.word-note{opacity:1!important;transform:none!important}.wm .fill{clip-path:none!important}.wm .cur{display:none}}
+</style>
+</head>
+<body>
+
+<div id="intro" aria-hidden="true">
+  <div class="wm"><h2 class="ghost">loumani</h2><h2 class="fill">loumani</h2><span class="cur"><em>Louise</em></span></div>
+  <div class="hand word-note">marketing digital &amp; communication</div>
+  <button class="skip" type="button">Passer →</button>
+</div>
+
+<div class="idcard">
+  <div><div class="name">Version 9 — test de l'intro</div><div class="desc">À l'ouverture, « loumani » se remplit sur fond prune, puis le rideau remonte sur ton titre. L'intro ne s'affiche qu'une fois par visite et se passe d'un clic. <a href="#" id="replay" style="text-decoration:underline;font-weight:600">Revoir l'intro ↻</a></div></div>
+  <div class="swatches"><span style="background:#4A1E3F"></span><span style="background:#FFFFFF"></span><span style="background:#BCD5F0"></span><span style="background:#F5E39A"></span><span style="background:#D9CCF4"></span><span style="background:#F1D3D6"></span><span style="background:#ECE7E0"></span></div>
+</div>
+
+<!-- HERO -->
+<div class="panel">
+  <nav><div class="logo">loumani<i></i></div><div class="links"><a href="#services">Services</a><a href="#projets">Projets</a><a href="#apropos">À propos</a><a href="#faq">FAQ</a></div><a class="btn p" href="#contact">On échange ?</a></nav>
+  <div class="hero">
+    <div class="txt">
+      <div class="kick">( freelance — marketing digital &amp; communication )</div>
+      <h1 id="h1">Ta com digitale, de l'<span class="grow"><span class="sel"><b></b>idée</span><span class="wd" style="--k:0"> à</span><span class="wd" style="--k:1"> la</span><span class="wd" style="--k:2"><em> mise</em></span><span class="wd" style="--k:3"><em> en</em></span><span class="wd" style="--k:4"><em> ligne.</em></span><span class="caret"></span></span></h1>
+      <p class="sub">Contenus, photo, site, pub, emailing et visuels IA : j'accompagne les TPE et PME sur toute leur communication. Une seule interlocutrice, qui connaît ton projet par cœur.</p>
+      <div class="ctas"><a class="btn p" href="#contact">On échange ? →</a><a class="btn s" href="#projets">Voir mes projets</a></div>
+      <div class="trust">Ils me font confiance <b>Solari Mobility</b><b>Boutique Hôtel</b><b>…</b></div>
+    </div>
+    <div class="desk">
+      <div class="win w1"><div class="bar"><i></i><i></i><i></i><span>louise.jpg</span></div><div class="ph">ta photo ici</div></div>
+      <div class="cursor"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M3 2l7 19 2.5-8L21 10z" fill="#4A1E3F" stroke="#fff" stroke-width="1.5"/></svg><em>Louise</em></div>
+      <div class="badge">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="49" fill="#4A1E3F"/><defs><path id="c1" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0"/></defs><text font-family="Inter Tight" font-weight="600" font-size="8.4" letter-spacing="2.6" fill="#F6F1F8"><textPath href="#c1">MARKETING DIGITAL · LOUMANI · </textPath></text></svg>
+        <div class="mono">lm</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BANDEAU -->
+<div class="panel dark marq">
+  <div class="marquee"><div class="track">
+    <span>Réseaux sociaux</span><b>●</b><span>Photo</span><b>●</b><span>Visuels IA</span><b>●</b><span>Site internet</span><b>●</b><span>Référencement</span><b>●</b><span>Meta &amp; Google Ads</span><b>●</b><span>CRM &amp; emailing</span><b>●</b>
+    <span>Réseaux sociaux</span><b>●</b><span>Photo</span><b>●</b><span>Visuels IA</span><b>●</b><span>Site internet</span><b>●</b><span>Référencement</span><b>●</b><span>Meta &amp; Google Ads</span><b>●</b><span>CRM &amp; emailing</span><b>●</b>
+  </div></div>
+</div>
+
+<!-- SERVICES -->
+<div class="panel pad" id="services">
+  <div class="head">
+    <div><div class="kick">( ce que je fais pour toi )</div><h2>Tout ce qu'il faut pour que ta marque se voie <em>et se retienne.</em></h2></div>
+    <div class="hand note">ouvre un dossier,<br>tu vas voir ↓</div>
+  </div>
+  <div class="folders">
+    <button class="folder f1" data-s="contenus"><div class="paper"><i></i>reel_hotel_final.mp4</div><div class="body"><div class="obj">( créer )</div><h3>Contenus</h3><p>Des contenus qui donnent envie de s'arrêter.</p><ul><li>Réseaux sociaux</li><li>Photo</li><li>Visuels IA</li><li>Motion design</li></ul><div class="open"><span>+</span>Ouvrir le dossier</div></div></button>
+    <button class="folder f2" data-s="site"><div class="paper"><i></i>maquette_site.fig</div><div class="body"><div class="obj">( être trouvé )</div><h3>Site &amp; SEO</h3><p>Une vitrine qui travaille pour toi, même la nuit.</p><ul><li>Site internet</li><li>Référencement</li></ul><div class="open"><span>+</span>Ouvrir le dossier</div></div></button>
+    <button class="folder f3" data-s="pub"><div class="paper"><i></i>campagne_meta.png</div><div class="body"><div class="obj">( attirer )</div><h3>Publicité</h3><p>Toucher les bonnes personnes, au bon moment.</p><ul><li>Meta Ads</li><li>Google Ads</li></ul><div class="open"><span>+</span>Ouvrir le dossier</div></div></button>
+    <button class="folder f4" data-s="crm"><div class="paper"><i></i>newsletter_avril.html</div><div class="body"><div class="obj">( fidéliser )</div><h3>CRM &amp; emailing</h3><p>Garder le lien avec tes clients, sans y penser.</p><ul><li>Templates</li><li>Scénarios automatiques</li></ul><div class="open"><span>+</span>Ouvrir le dossier</div></div></button>
+  </div>
+  <div class="after-cta"><span class="hand">Tu ne sais pas par où commencer ?</span><a class="btn p" href="#contact">On en parle, je te conseille →</a></div>
+</div>
+
+<!-- POP-UP SERVICE -->
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="win">
+    <div class="bar"><i data-close></i><i></i><i></i><span id="m-file">contenus</span><button class="close" data-close aria-label="Fermer">×</button></div>
+    <div class="content">
+      <div class="obj" id="m-obj"></div>
+      <h3 id="m-title"></h3>
+      <p class="intro" id="m-intro"></p>
+      <div class="items" id="m-items"></div>
+      <div class="for"><span class="hand">c'est pour toi si…</span><span id="m-for"></span></div>
+      <div class="ctas"><a class="btn p" href="#contact" data-close>On en parle →</a><a class="btn s" href="#projets" data-close>Voir des exemples</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJETS -->
+<div class="panel pad" id="projets">
+  <div class="head"><div><div class="kick">( projets )</div><h2>Quelques projets <em>dont je suis fière.</em></h2></div></div>
+  <div class="win finder">
+    <div class="bar"><i></i><i></i><i></i><span>Projets — loumani</span></div>
+    <div class="side"><span class="on">Tout</span><span>Contenus</span><span>Site &amp; SEO</span><span>Publicité</span><span>CRM</span></div>
+    <div class="grid">
+      <div class="file"><div class="ph" style="background:linear-gradient(160deg,#7A3B66,#4A1E3F)"></div><div class="name">Boutique Hôtel</div><div class="sector">Ameublement · contenus mensuels</div><div class="chips"><span class="chip c-contenus">Réseaux sociaux</span><span class="chip c-contenus">Photo</span><span class="chip c-contenus">Vidéo</span></div></div>
+      <div class="file"><div class="ph" style="background:linear-gradient(160deg,#E6F0FB,#BCD5F0)"></div><div class="name">Solari Mobility</div><div class="sector">Automobile · [projet à préciser]</div><div class="chips"><span class="chip c-pub">Publicité</span></div></div>
+      <div class="file"><div class="ph" style="background:linear-gradient(160deg,#FBF4D6,#F5E39A)"></div><div class="name">[Projet]</div><div class="sector">Secteur · [à préciser]</div><div class="chips"><span class="chip c-site">Site &amp; SEO</span><span class="chip c-crm">CRM</span></div></div>
+    </div>
+  </div>
+  <div class="after-cta" style="justify-content:center"><span class="hand">Ton projet pourrait être le prochain.</span><a class="btn p" href="#contact">On échange ? →</a></div>
+</div>
+
+<!-- À PROPOS -->
+<div class="panel dark stage" id="apropos">
+  <div class="word">
+    <div class="tags"><div class="kick" style="margin:0">( à propos )</div><div><span class="pill">Créative</span><span class="pill">Proche</span><span class="pill">Polyvalente</span></div></div>
+    <div class="wm" aria-label="loumani"><h2 class="ghost" aria-hidden="true">loumani</h2><h2 class="fill">loumani</h2><span class="cur"><em>Louise</em></span></div>
+    <div class="hand word-note">Louise + hamani, « créer » en tahitien</div>
+  </div>
+</div>
+<div class="panel">
+  <div class="about">
+    <div class="aboutgrid">
+      <div><div class="polaroid"><div class="tape"></div><div class="ph">ta photo ici</div><div class="cap">moi, en vrai</div></div></div>
+      <div class="bio">
+        <h3>Moi, c'est <span class="sel y"><b></b>Louise</span></h3>
+        <p><span class="hl">loumani</span>, c'est mon prénom et <i>hamani</i>, « créer » en tahitien. Ça résume ce que j'aime faire : créer avec et pour toi.</p>
+        <p>Relation client, CRM, marketing : j'ai fait mes armes auprès de grandes marques et dans des univers très différents. Aujourd'hui, je mets tout ça au service de ton projet, avec beaucoup d'exigence et autant de proximité. Et chaque nouveau secteur, c'est un nouveau terrain de jeu.</p>
+        <div class="dock"><span>Cv</span><span>Mt</span><span>Ps</span><span>G</span><span>IA</span><span>Wp</span></div>
+        <div class="hand tools-note">↑ mes outils du quotidien</div>
+        <a class="btn p" href="#contact" style="margin-top:22px">Envie de faire connaissance ? →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TÉMOIGNAGES -->
+<div class="panel photo-bg">
+  <div class="bgimg"></div>
+  <div class="kick">( ce qu'ils en disent )</div>
+  <h2>Les petits mots <em>de mes clients</em></h2>
+  <div class="notes">
+    <div class="notenote" style="--r:-4deg;background:#fff;">« Témoignage de Boutique Hôtel à venir. »<small>Prénom Nom — Boutique Hôtel</small></div>
+    <div class="notenote" style="--r:2deg;background:var(--yellow);">« Témoignage de Solari Mobility à venir. »<small>Prénom Nom — Solari Mobility</small></div>
+    <div class="notenote" style="--r:-1deg;background:var(--blue);">« Un troisième petit mot ici. »<small>Prénom Nom — Entreprise</small></div>
+  </div>
+  <div class="photo-label">photo d'exemple, à remplacer par une des tiennes</div>
+</div>
+
+<!-- FAQ -->
+<div class="panel pad" id="faq">
+  <div class="faq">
+    <div><div class="kick">( questions fréquentes )</div><h2>Oui, <em>mais…</em></h2><p class="hand" style="font-size:25px;color:var(--plum4);margin-top:16px">une autre question ? écris-moi</p></div>
+    <div>
+      <details open><summary>Question 1 à définir</summary><p>Réponse à rédiger.</p></details>
+      <details><summary>Question 2 à définir</summary><p>Réponse à rédiger.</p></details>
+      <details><summary>Question 3 à définir</summary><p>Réponse à rédiger.</p></details>
+      <details><summary>Question 4 à définir</summary><p>Réponse à rédiger.</p></details>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="panel dark pad" id="contact">
+  <div class="contact">
+    <div>
+      <div class="kick">( contact )</div>
+      <h2>On en <em>parle&nbsp;?</em></h2>
+      <p style="font-size:17px;line-height:1.6;opacity:.8;margin-top:20px">Raconte-moi ton projet en quelques mots,<br>je te réponds sous 24 h.</p>
+      <a class="mailto" href="mailto:contact@loumani.com">ou écris-moi directement : contact@loumani.com ↗</a>
+      <div class="hand" style="font-size:24px;margin-top:22px;color:var(--yellow)">basée à Tahiti, disponible partout</div>
+    </div>
+    <div>
+      <div class="wrapbadge"><div class="badge"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="49" fill="#F5E39A"/><defs><path id="c3" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0"/></defs><text font-family="Inter Tight" font-weight="600" font-size="8.4" letter-spacing="2.6" fill="#4A1E3F"><textPath href="#c3">ON ÉCHANGE ? · LOUMANI · </textPath></text></svg><div class="mono" style="color:#4A1E3F">lm</div></div></div>
+      <div class="win mail">
+        <div class="bar"><i></i><i></i><i></i><span>Nouveau message</span></div>
+        <div class="row"><span>À :</span>Louise — loumani</div>
+        <div class="row"><span>Objet :</span><input class="from" id="subject" placeholder="ton prénom et ton entreprise"></div>
+        <div class="needs">
+          <input type="checkbox" id="n1"><label for="n1">Contenus</label>
+          <input type="checkbox" id="n2"><label for="n2">Site &amp; SEO</label>
+          <input type="checkbox" id="n3"><label for="n3">Publicité</label>
+          <input type="checkbox" id="n4"><label for="n4">CRM</label>
+          <input type="checkbox" id="n5"><label for="n5">Je ne sais pas encore</label>
+        </div>
+        <textarea id="body" placeholder="Raconte-moi ton projet…"></textarea>
+        <div class="send"><span style="font-size:12px;opacity:.5">s'ouvre dans ta messagerie · réponse sous 24 h</span><a class="btn p" id="send" href="mailto:contact@loumani.com">Envoyer ↗</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer><span><b>loumani</b> — Marketing digital et communication, depuis Tahiti</span><span>Instagram · LinkedIn · Mentions légales</span><span>© loumani — Louise Hénoux · n° TAHITI</span></footer>
+
+<script>
+/* animation 1 : le surlignage du titre s'étire au scroll, le curseur le suit */
+const root=document.documentElement,h1=document.getElementById('h1'),sel=h1.querySelector('.sel'),words=[...h1.querySelectorAll('.wd')],caret=h1.querySelector('.caret');
+const clamp=v=>Math.min(1,Math.max(0,v));
+function placeCaret(p){
+  const base=h1.getBoundingClientRect();
+  let r=sel.getBoundingClientRect(),x=r.right;
+  words.forEach((w,k)=>{const f=clamp(p*5.2-k);if(f>0){const wr=w.getBoundingClientRect();r=wr;x=wr.left+wr.width*f}});
+  caret.style.transform=`translate(${x-base.left-1.5}px,${r.top-base.top-5}px)`;
+  caret.style.height=(r.height+10)+'px';
+}
+
+/* animation 2 : « loumani » arrive en grand, du flou et transparent vers le net */
+const stage=document.getElementById('apropos');
+const still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function onScroll(){
+  const p=still?1:clamp(scrollY/260);
+  root.style.setProperty('--p',p.toFixed(3));placeCaret(p);
+  const t=stage.getBoundingClientRect().top;
+  /* 0 quand le bloc arrive à mi-écran, 1 un peu avant la fin de la partie fixe */
+  const run=innerHeight*.55+(stage.offsetHeight-innerHeight)*.8;
+  stage.style.setProperty('--w',(still?1:clamp((innerHeight*.55-t)/run)).toFixed(3));
+}
+addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);
+document.fonts.ready.then(onScroll);onScroll();
+document.querySelectorAll('.finder .side span').forEach(s=>s.onclick=()=>{document.querySelectorAll('.finder .side span').forEach(x=>x.classList.remove('on'));s.classList.add('on')});
+
+/* formulaire : ouvre la messagerie avec l'objet, les besoins cochés et le message */
+document.getElementById('send').addEventListener('click',e=>{
+  const needs=[...document.querySelectorAll('.needs input:checked')].map(i=>i.nextElementSibling.textContent).join(', ');
+  const subject='Projet — '+(document.getElementById('subject').value||'nouveau contact');
+  const body=(needs?'Besoins : '+needs+'\n\n':'')+document.getElementById('body').value;
+  e.currentTarget.href='mailto:contact@loumani.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+});
+
+/* pop-up des dossiers : même fenêtre, 4 éléments par service */
+const S={
+  contenus:{file:'contenus',obj:'( créer )',title:'Contenus',intro:"Des contenus pensés pour ta marque et pour tes réseaux, qui donnent envie de s'arrêter, de liker et de passer à l'action.",
+    items:[['Réseaux sociaux','Posts, carrousels et reels, de l\'idée à la publication.'],['Photo','Shooting et retouche de tes produits, de ton lieu, de ton équipe.'],['Visuels IA','Des visuels de qualité studio à partir de tes propres photos.'],['Motion design','Des vidéos courtes et animées pour capter l\'attention.']],
+    for:"tu manques de temps pour publier, tes visuels ne reflètent pas la qualité de ce que tu fais, ou tu veux enfin une ligne éditoriale cohérente."},
+  site:{file:'site-et-seo',obj:'( être trouvé )',title:'Site & SEO',intro:"Un site clair, beau et rapide, qui donne confiance et que Google a envie de montrer.",
+    items:[['Site vitrine','Un site à ton image, simple à mettre à jour.'],['Refonte','Ton site actuel, remis au goût du jour.'],['Référencement (SEO)','Les bons mots-clés et une structure pensée pour être trouvé.'],['Fiche Google','Être visible sur Google Maps, près de chez tes clients.']],
+    for:"tu n'as pas encore de site, le tien ne te ressemble plus, ou personne ne te trouve sur Google."},
+  pub:{file:'publicite',obj:'( attirer )',title:'Publicité',intro:"Des campagnes qui touchent les bonnes personnes, avec un budget maîtrisé et des résultats suivis.",
+    items:[['Meta Ads','Facebook et Instagram : visuels, textes et diffusion.'],['Google Ads','Être visible au moment où on te cherche.'],['Ciblage','Parler aux bonnes personnes, au bon endroit.'],['Suivi des résultats','Savoir ce que chaque euro te rapporte.']],
+    for:"tu veux plus de clients rapidement, lancer une offre, ou arrêter de dépenser en pub sans savoir ce que ça rapporte."},
+  crm:{file:'crm-et-emailing',obj:'( fidéliser )',title:'CRM & emailing',intro:"Garder le lien avec tes clients et les faire revenir, sans y passer tes journées.",
+    items:[['Templates email','Des emails à ton image, faciles à réutiliser.'],['Newsletters','Des nouvelles régulières qui donnent envie de te lire.'],['Scénarios automatiques','Bienvenue, relance, anniversaire : des emails qui partent tout seuls.'],['Segmentation','Le bon message pour chaque type de client.']],
+    for:"tu as des contacts mais tu ne leur écris jamais, ou tu veux que tes clients reviennent plus souvent."}
+};
+const m=document.getElementById('modal');
+document.querySelectorAll('.folder').forEach(f=>f.onclick=()=>{
+  const d=S[f.dataset.s];
+  document.getElementById('m-file').textContent=d.file;
+  document.getElementById('m-obj').textContent=d.obj;
+  document.getElementById('m-title').textContent=d.title;
+  document.getElementById('m-intro').textContent=d.intro;
+  document.getElementById('m-for').textContent=d.for;
+  document.getElementById('m-items').innerHTML=d.items.map(([t,s])=>`<div class="item"><b>${t}</b><span>${s}</span></div>`).join('');
+  m.classList.add('on');document.body.classList.add('modal-open');
+});
+const close=()=>{m.classList.remove('on');document.body.classList.remove('modal-open')};
+m.addEventListener('click',e=>{if(e.target===m||e.target.closest('[data-close]'))close()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+
+/* intro : 1,6 s de remplissage, courte pause, puis le rideau remonte */
+const intro=document.getElementById('intro');
+function playIntro(){
+  intro.style.display='';intro.classList.remove('out');intro.style.setProperty('--w',0);
+  root.classList.remove('no-intro');root.classList.add('intro-on');history.scrollRestoration='manual';scrollTo(0,0);
+  let done=false,t0=null;
+  const close=()=>{if(done)return;done=true;intro.style.setProperty('--w',1);scrollTo(0,0);intro.classList.add('out');root.classList.remove('intro-on');
+    try{sessionStorage.setItem('lm-intro','1')}catch(e){}
+    setTimeout(()=>{intro.style.display='none'},950)};
+  intro.onclick=close;addEventListener('keydown',e=>{if(e.key==='Escape')close()},{once:true});
+  const step=t=>{if(done)return;t0??=t;const k=Math.min(1,(t-t0)/1600);
+    intro.style.setProperty('--w',(1-Math.pow(1-k,3)).toFixed(3));
+    k<1?requestAnimationFrame(step):setTimeout(close,550)};
+  Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,700))]).then(()=>requestAnimationFrame(step));
+}
+if(!root.classList.contains('no-intro'))playIntro();else intro.style.display='none';
+document.getElementById('replay').onclick=e=>{e.preventDefault();playIntro()};
+</script>
+</body>
+</html>
